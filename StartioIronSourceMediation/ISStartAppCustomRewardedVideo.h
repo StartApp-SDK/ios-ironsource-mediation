@@ -15,7 +15,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "IronSource/ISBaseRewardedVideo.h"
+#import "IronSource/IronSource.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

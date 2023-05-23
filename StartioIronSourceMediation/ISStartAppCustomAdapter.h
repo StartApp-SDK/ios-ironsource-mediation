@@ -15,7 +15,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "IronSource/ISBaseNetworkAdapter.h"
+#import "IronSource/IronSource.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

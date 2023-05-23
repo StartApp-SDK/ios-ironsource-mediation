@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "startio-ironsource-mediation"
-  spec.version      = "1.0.0"
+  spec.version      = "1.0.1"
   spec.summary      = "Start.io <-> ironSource iOS Mediation Adapter."
 
   spec.description  = <<-DESC
@@ -20,6 +20,7 @@ Pod::Spec.new do |spec|
   spec.requires_arc = true
   spec.static_framework = true
   
-  spec.dependency "StartAppSDK", "~> 4.7.0"
-  spec.dependency "IronSourceSDK", "~> 7.2"
+  spec.dependency "IronSourceSDK", "~> 7"
+  spec.dependency "StartAppSDK", ">= 4.9.2", "< 5"
+
 end
