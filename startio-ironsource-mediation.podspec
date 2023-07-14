@@ -21,6 +21,6 @@ Pod::Spec.new do |spec|
   spec.static_framework = true
   
   spec.dependency "IronSourceSDK", "~> 7"
-  spec.dependency "StartAppSDK", ">= 4.9.2", "< 5"
+  spec.dependency "StartAppSDK", ">= 4.10.0", "< 5"
 
 end
