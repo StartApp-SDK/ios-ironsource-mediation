@@ -48,10 +48,8 @@
 - (void)setupStartioSDKWithAppID:(NSString *)appID adData:(ISAdData *)adData {
     STAStartAppSDK *sdk = [STAStartAppSDK sharedInstance];
     sdk.appID = appID;
-    sdk.returnAdEnabled = NO;
     sdk.testAdsEnabled = NO;
-    sdk.consentDialogEnabled = NO;
-    [sdk addWrapperWithName:@"IronSource" version:ISStartAppAdapterVersion];
+    [sdk enableMediationModeFor:@"IronSource" version:ISStartAppAdapterVersion];
 }
 
 - (NSString *)networkSDKVersion {
