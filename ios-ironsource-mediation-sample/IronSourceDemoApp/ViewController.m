@@ -7,11 +7,12 @@
 
 #import "ViewController.h"
 #import <IronSource/IronSource.h>
+#import "InterstitialDelegateAdapter.h"
 
 #define USERID @"demoapp"
 #define APPKEY @"1418f3da9"
 
-@interface ViewController () <LevelPlayRewardedVideoDelegate,ISInterstitialDelegate ,ISOfferwallDelegate, LevelPlayBannerDelegate, ISImpressionDataDelegate>
+@interface ViewController () <LevelPlayRewardedVideoDelegate, InterstitialDelegateAdapterDelegate, ISOfferwallDelegate, LevelPlayBannerDelegate, ISImpressionDataDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *showRVButton;
 @property (weak, nonatomic) IBOutlet UIButton *showOWButton;
@@ -21,6 +22,9 @@
 
 @property (nonatomic, strong) ISPlacementInfo   *rvPlacementInfo;
 @property (nonatomic, strong) ISBannerView      *bannerView;
+
+@property (nonatomic) InterstitialDelegateAdapter *interstitialDelegateAdapter;
+
 @end
 
 @implementation ViewController
@@ -54,7 +58,10 @@
     // to be able to enable/disable buttons to match ad availability.
     
     [IronSource setLevelPlayRewardedVideoDelegate:self];
-    [IronSource setInterstitialDelegate:self];
+    InterstitialDelegateAdapter *interstitialDelegateAdapter = [InterstitialDelegateAdapter new];
+    interstitialDelegateAdapter.delegate = self;
+    self.interstitialDelegateAdapter = interstitialDelegateAdapter;
+    [IronSource setLevelPlayInterstitialDelegate:interstitialDelegateAdapter];
     [IronSource setLevelPlayBannerDelegate:self];
     [IronSource addImpressionDataDelegate:self];
 
