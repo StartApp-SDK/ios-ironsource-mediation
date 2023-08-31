@@ -11,7 +11,7 @@
 #define USERID @"demoapp"
 #define APPKEY @"1418f3da9"
 
-@interface ViewController () <LevelPlayRewardedVideoDelegate ,ISInterstitialDelegate ,ISOfferwallDelegate ,ISBannerDelegate,ISImpressionDataDelegate>
+@interface ViewController () <LevelPlayRewardedVideoDelegate,ISInterstitialDelegate ,ISOfferwallDelegate, LevelPlayBannerDelegate, ISImpressionDataDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *showRVButton;
 @property (weak, nonatomic) IBOutlet UIButton *showOWButton;
@@ -55,7 +55,7 @@
     
     [IronSource setLevelPlayRewardedVideoDelegate:self];
     [IronSource setInterstitialDelegate:self];
-    [IronSource setBannerDelegate:self];
+    [IronSource setLevelPlayBannerDelegate:self];
     [IronSource addImpressionDataDelegate:self];
 
     NSString *userId = [IronSource advertiserId];
@@ -294,7 +294,7 @@
 /**
  Called after a banner ad has been successfully loaded
  */
-- (void)bannerDidLoad:(ISBannerView *)bannerView {
+- (void)didLoad:(ISBannerView *)bannerView withAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s",__PRETTY_FUNCTION__);
     dispatch_async(dispatch_get_main_queue(), ^{
         self.bannerView = bannerView;
@@ -311,35 +311,35 @@
  Called after a banner has attempted to load an ad but failed.
   @param error The reason for the error
  */
-- (void)bannerDidFailToLoadWithError:(NSError *)error {
+- (void)didFailToLoadWithError:(NSError *)error {
     NSLog(@"%s",__PRETTY_FUNCTION__);
 }
 
 /**
  Called after a banner has been clicked.
  */
-- (void)didClickBanner {
+- (void)didClickWithAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s",__PRETTY_FUNCTION__);
 }
 
 /**
  Called when a banner is about to present a full screen content.
  */
-- (void)bannerWillPresentScreen {
+- (void)didPresentScreenWithAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s",__PRETTY_FUNCTION__);
 }
 
 /**
  Called after a full screen content has been dismissed.
  */
-- (void)bannerDidDismissScreen {
+- (void)didDismissScreenWithAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s",__PRETTY_FUNCTION__);
 }
 
 /**
  Called when a user would be taken out of the application context.
  */
-- (void)bannerWillLeaveApplication {
+- (void)didLeaveApplicationWithAdInfo:(ISAdInfo *)adInfo; {
     NSLog(@"%s",__PRETTY_FUNCTION__);
 }
 
