@@ -193,12 +193,13 @@
 - (void)didCloseWithAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s", __PRETTY_FUNCTION__);
     if (self.rvPlacementInfo) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Video Reward"
-                                                        message:[NSString stringWithFormat:@"You have been rewarded %d %@", [self.rvPlacementInfo.rewardAmount intValue], self.rvPlacementInfo.rewardName]
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
-        [alert show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Video Reward" message:[NSString stringWithFormat:@"You have been rewarded %d %@", [self.rvPlacementInfo.rewardAmount intValue], self.rvPlacementInfo.rewardName] preferredStyle: UIAlertControllerStyleAlert];
+        __weak typeof(self) weakSelf = self;
+        UIAlertAction *action = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            [weakSelf dismissViewControllerAnimated:true completion:nil];
+        }];
+        [self presentViewController:alert animated:YES completion:nil];
+        [alert addAction:action];
         self.rvPlacementInfo = nil;
     }
 }
