@@ -85,7 +85,7 @@
      * Banner integration
      * To finalize your banner integration, you must integrate at least one of our mediation adapters that have banner.
      */
-//    [self loadBanner];
+    [self loadBanner];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -305,6 +305,9 @@
 - (void)didLoad:(ISBannerView *)bannerView withAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s",__PRETTY_FUNCTION__);
     dispatch_async(dispatch_get_main_queue(), ^{
+        if (bannerView == self.bannerView) {
+            return;
+        }
         self.bannerView = bannerView;
         if (@available(iOS 11.0, *)) {
             [self.bannerView setCenter:CGPointMake(self.view.center.x,self.view.frame.size.height - (self.bannerView.frame.size.height/2.0) - self.view.safeAreaInsets.bottom)]; // safeAreaInsets is available from iOS 11.0
