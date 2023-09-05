@@ -20,7 +20,7 @@ Pod::Spec.new do |spec|
   spec.requires_arc = true
   spec.static_framework = true
   
-  spec.dependency "IronSourceSDK", "~> 7"
+  spec.dependency "IronSourceSDK", ">= 7.5.0.0", "< 8"
   spec.dependency "StartAppSDK", ">= 4.10.0", "< 5"
 
 end
