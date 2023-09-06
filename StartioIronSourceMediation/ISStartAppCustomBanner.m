@@ -25,7 +25,7 @@
 
 @interface ISBannerSize (StartIOExtensions)
 
-- (NSValue *)com_sta_size;
+- (NSValue *)com_sta_sizeWithContainingViewController:(UIViewController *)viewController;
 
 @end
 
@@ -44,35 +44,28 @@
           size:(ISBannerSize *)size
         delegate:(nonnull id<ISBannerAdDelegate>)delegate {
     
-    NSValue *staBannerSizeAsValue = size.com_sta_size;
-    if (nil == staBannerSizeAsValue) {
-        dispatch_block_t reportNotSupportedBannerSize = ^{
+    dispatch_block_t performBlock = ^{
+        STABannerSize staSizeToLoad;
+        NSValue *staBannerSizeAsValue = [size com_sta_sizeWithContainingViewController:viewController];
+        if (nil == staBannerSizeAsValue) {
             if ([delegate respondsToSelector:@selector(adDidFailToLoadWithErrorType:errorCode:errorMessage:)]) {
                 [delegate adDidFailToLoadWithErrorType:ISAdapterErrorTypeInternal
                                              errorCode:ISAdapterErrorInternal
                                           errorMessage:@"banner size not supported"];
             }
         };
-            
-        if (NSThread.isMainThread) {
-            reportNotSupportedBannerSize();
-        } else {
-            dispatch_async(dispatch_get_main_queue(), reportNotSupportedBannerSize);
-        }
-    }
-    
-    STABannerSize staSizeToLoad;
-    [staBannerSizeAsValue getValue:&staSizeToLoad];
-    ISStartAppExtras *extras = [[ISStartAppExtras alloc] initWithParamsDictionary:adData.configuration];
-    STAAdPreferences *adPrefs = extras.prefs;
+        
+        [staBannerSizeAsValue getValue:&staSizeToLoad];
+        
+        ISStartAppExtras *extras = [[ISStartAppExtras alloc] initWithParamsDictionary:adData.configuration];
+        STAAdPreferences *adPrefs = extras.prefs;
+        
+        [self performBannerLoadWitnSize:staSizeToLoad preferences:adPrefs delegate:delegate];
+    };
     
     if (NSThread.isMainThread) {
-        [self performBannerLoadWitnSize:staSizeToLoad preferences:adPrefs delegate:delegate];
-    } else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self performBannerLoadWitnSize:staSizeToLoad preferences:adPrefs delegate:delegate];
-        });
-    }
+        performBlock();
+    } else dispatch_async(dispatch_get_main_queue(), performBlock);
 }
 
 - (void)performBannerLoadWitnSize:(STABannerSize)bannerSize preferences:(STAAdPreferences *)preferences delegate:(nonnull id<ISBannerAdDelegate>) delegate {
@@ -117,16 +110,21 @@
 
 @implementation ISBannerSize (StartIOExtensions)
 
-- (NSValue *)com_sta_size {
-    
-    NSValue *result = nil;
-    
-    if (!self.isSmart) {
-        CGSize size = CGSizeMake(self.width, self.height);
-        STABannerSize staSize = {size, false};
-        result = [NSValue value:&staSize withObjCType:@encode(STABannerSize)];
+- (NSValue *)com_sta_sizeWithContainingViewController:(UIViewController *)viewController {
+    ISBannerSize *runtimeISBannerSize = self;
+    if (self.isSmart) {
+        if (
+            UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad
+            //IronSource returns banner size according to interface idiom, not the size of screen
+            //viewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
+            ) {
+                runtimeISBannerSize = ISBannerSize_LEADERBOARD;
+            } else {
+                runtimeISBannerSize = ISBannerSize_BANNER;
+            }
     }
-    
+    STABannerSize staBannerSize = { CGSizeMake(runtimeISBannerSize.width, runtimeISBannerSize.height), false };
+    NSValue *result = [NSValue value:&staBannerSize withObjCType:@encode(STABannerSize)];
     return result;
 }
 
