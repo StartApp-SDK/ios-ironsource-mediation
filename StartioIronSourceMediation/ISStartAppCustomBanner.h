@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Start.io Inc
+ * Copyright 2023 Start.io Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-#ifndef ISStartAppConstants_h
-#define ISStartAppConstants_h
+#import <Foundation/Foundation.h>
+#import "IronSource/IronSource.h"
 
-NSString *const ISStartAppAdapterVersion = @"1.1.0";
+NS_ASSUME_NONNULL_BEGIN
 
-NSString *const ISStartAppKeyAppID = @"appId";
+@interface ISStartAppCustomBanner : ISBaseBanner
 
-#endif /* ISStartAppConstants_h */
+@end
+
+NS_ASSUME_NONNULL_END

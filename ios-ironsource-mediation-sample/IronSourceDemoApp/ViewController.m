@@ -7,11 +7,12 @@
 
 #import "ViewController.h"
 #import <IronSource/IronSource.h>
+#import "InterstitialDelegateAdapter.h"
 
 #define USERID @"demoapp"
 #define APPKEY @"1418f3da9"
 
-@interface ViewController () <ISRewardedVideoDelegate ,ISInterstitialDelegate ,ISOfferwallDelegate ,ISBannerDelegate,ISImpressionDataDelegate>
+@interface ViewController () <LevelPlayRewardedVideoDelegate, InterstitialDelegateAdapterDelegate, ISOfferwallDelegate, LevelPlayBannerDelegate, ISImpressionDataDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *showRVButton;
 @property (weak, nonatomic) IBOutlet UIButton *showOWButton;
@@ -21,6 +22,9 @@
 
 @property (nonatomic, strong) ISPlacementInfo   *rvPlacementInfo;
 @property (nonatomic, strong) ISBannerView      *bannerView;
+
+@property (nonatomic) InterstitialDelegateAdapter *interstitialDelegateAdapter;
+
 @end
 
 @implementation ViewController
@@ -53,10 +57,12 @@
     // We're passing 'self' to our delegates because we want
     // to be able to enable/disable buttons to match ad availability.
     
-    [IronSource setRewardedVideoDelegate:self];
-//    [IronSource setOfferwallDelegate:self];
-    [IronSource setInterstitialDelegate:self];
-//    [IronSource setBannerDelegate:self];
+    [IronSource setLevelPlayRewardedVideoDelegate:self];
+    InterstitialDelegateAdapter *interstitialDelegateAdapter = [InterstitialDelegateAdapter new];
+    interstitialDelegateAdapter.delegate = self;
+    self.interstitialDelegateAdapter = interstitialDelegateAdapter;
+    [IronSource setLevelPlayInterstitialDelegate:interstitialDelegateAdapter];
+    [IronSource setLevelPlayBannerDelegate:self];
     [IronSource addImpressionDataDelegate:self];
 
     NSString *userId = [IronSource advertiserId];
@@ -69,7 +75,7 @@
     // After setting the delegates you can go ahead and initialize the SDK.
     [IronSource setUserId:userId];
     
-    [IronSource initWithAppKey:APPKEY adUnits:@[IS_REWARDED_VIDEO, IS_INTERSTITIAL]];
+    [IronSource initWithAppKey:APPKEY adUnits:@[IS_REWARDED_VIDEO, IS_INTERSTITIAL, IS_BANNER]];
     // To initialize specific ad units:
     // [IronSource initWithAppKey:APPKEY adUnits:@[IS_REWARDED_VIDEO, IS_INTERSTITIAL, IS_OFFERWALL, IS_BANNER]];
     
@@ -79,7 +85,7 @@
      * Banner integration
      * To finalize your banner integration, you must integrate at least one of our mediation adapters that have banner.
      */
-//    [self loadBanner];
+    [self loadBanner];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -148,16 +154,22 @@
 
 // This method lets you know whether or not there is a video
 // ready to be presented. It is only after this method is invoked
-// with 'hasAvailableAds' set to 'YES' that you can should 'showRV'.
-- (void)rewardedVideoHasChangedAvailability:(BOOL)available {
+- (void)hasAvailableAdWithAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s", __PRETTY_FUNCTION__);
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.showRVButton setEnabled:available];
+        [self.showRVButton setEnabled:YES];
+    });
+}
+
+- (void)hasNoAvailableAd {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.showRVButton setEnabled:NO];
     });
 }
 
 // This method gets invoked after the user has been rewarded.
-- (void)didReceiveRewardForPlacement:(ISPlacementInfo *)placementInfo {
+- (void)didReceiveRewardForPlacement:(ISPlacementInfo *)placementInfo withAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s", __PRETTY_FUNCTION__);
     self.rvPlacementInfo = placementInfo;
 }
@@ -165,44 +177,35 @@
 // This method gets invoked when there is a problem playing the video.
 // If it does happen, check out 'error' for more information and consult
 // our knowledge center for help.
-- (void)rewardedVideoDidFailToShowWithError:(NSError *)error {
+- (void)didFailToShowWithError:(NSError *)error andAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s", __PRETTY_FUNCTION__);
 }
 
 // This method gets invoked when we take control, but before
 // the video has started playing.
-- (void)rewardedVideoDidOpen {
+- (void)didOpenWithAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s", __PRETTY_FUNCTION__);
 }
 
 // This method gets invoked when we return controlback to your hands.
 // We chose to notify you about rewards here and not in 'didReceiveRewardForPlacement'.
 // This is because reward can occur in the middle of the video.
-- (void)rewardedVideoDidClose {
+- (void)didCloseWithAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s", __PRETTY_FUNCTION__);
     if (self.rvPlacementInfo) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Video Reward"
-                                                        message:[NSString stringWithFormat:@"You have been rewarded %d %@", [self.rvPlacementInfo.rewardAmount intValue], self.rvPlacementInfo.rewardName]
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
-        [alert show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Video Reward" message:[NSString stringWithFormat:@"You have been rewarded %d %@", [self.rvPlacementInfo.rewardAmount intValue], self.rvPlacementInfo.rewardName] preferredStyle: UIAlertControllerStyleAlert];
+        __weak typeof(self) weakSelf = self;
+        UIAlertAction *action = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            [weakSelf dismissViewControllerAnimated:true completion:nil];
+        }];
+        [self presentViewController:alert animated:YES completion:nil];
+        [alert addAction:action];
         self.rvPlacementInfo = nil;
     }
 }
 
-// This method gets invoked when the video has started playing.
-- (void)rewardedVideoDidStart {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-}
-
-// This method gets invoked when the video has stopped playing.
-- (void)rewardedVideoDidEnd {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-}
-
 // This method gets invoked after a video has been clicked
-- (void)didClickRewardedVideo:(ISPlacementInfo *)placementInfo {
+- (void)didClick:(ISPlacementInfo *)placementInfo withAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s", __PRETTY_FUNCTION__);
 }
 
@@ -299,9 +302,12 @@
 /**
  Called after a banner ad has been successfully loaded
  */
-- (void)bannerDidLoad:(ISBannerView *)bannerView {
+- (void)didLoad:(ISBannerView *)bannerView withAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s",__PRETTY_FUNCTION__);
     dispatch_async(dispatch_get_main_queue(), ^{
+        if (bannerView == self.bannerView) {
+            return;
+        }
         self.bannerView = bannerView;
         if (@available(iOS 11.0, *)) {
             [self.bannerView setCenter:CGPointMake(self.view.center.x,self.view.frame.size.height - (self.bannerView.frame.size.height/2.0) - self.view.safeAreaInsets.bottom)]; // safeAreaInsets is available from iOS 11.0
@@ -316,35 +322,35 @@
  Called after a banner has attempted to load an ad but failed.
   @param error The reason for the error
  */
-- (void)bannerDidFailToLoadWithError:(NSError *)error {
+- (void)didFailToLoadWithError:(NSError *)error {
     NSLog(@"%s",__PRETTY_FUNCTION__);
 }
 
 /**
  Called after a banner has been clicked.
  */
-- (void)didClickBanner {
+- (void)didClickWithAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s",__PRETTY_FUNCTION__);
 }
 
 /**
  Called when a banner is about to present a full screen content.
  */
-- (void)bannerWillPresentScreen {
+- (void)didPresentScreenWithAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s",__PRETTY_FUNCTION__);
 }
 
 /**
  Called after a full screen content has been dismissed.
  */
-- (void)bannerDidDismissScreen {
+- (void)didDismissScreenWithAdInfo:(ISAdInfo *)adInfo {
     NSLog(@"%s",__PRETTY_FUNCTION__);
 }
 
 /**
  Called when a user would be taken out of the application context.
  */
-- (void)bannerWillLeaveApplication {
+- (void)didLeaveApplicationWithAdInfo:(ISAdInfo *)adInfo; {
     NSLog(@"%s",__PRETTY_FUNCTION__);
 }
 
