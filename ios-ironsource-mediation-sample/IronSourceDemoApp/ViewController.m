@@ -8,6 +8,7 @@
 #import "ViewController.h"
 #import <IronSource/IronSource.h>
 #import "InterstitialDelegateAdapter.h"
+#import <StartApp/StartApp.h>
 
 #define USERID @"demoapp"
 #define APPKEY @"121eb220d"
@@ -76,6 +77,7 @@
     [IronSource setUserId:userId];
     
     [IronSource initWithAppKey:APPKEY adUnits:@[IS_REWARDED_VIDEO, IS_INTERSTITIAL, IS_BANNER]];
+    [STAStartAppSDK sharedInstance].testAdsEnabled = YES;
     // To initialize specific ad units:
     // [IronSource initWithAppKey:APPKEY adUnits:@[IS_REWARDED_VIDEO, IS_INTERSTITIAL, IS_OFFERWALL, IS_BANNER]];
     

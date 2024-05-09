@@ -44,7 +44,6 @@
 - (void)setupStartioSDKWithAppID:(NSString *)appID adData:(ISAdData *)adData {
     STAStartAppSDK *sdk = [STAStartAppSDK sharedInstance];
     sdk.appID = appID;
-    sdk.testAdsEnabled = NO;
     [sdk enableMediationModeFor:@"IronSource" version:ISStartAppAdapterVersion];
 }
 
