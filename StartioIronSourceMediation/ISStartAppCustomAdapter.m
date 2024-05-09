@@ -30,15 +30,11 @@
         }
     }
     else {
-        if ([NSThread isMainThread]) {
-            [self setupStartioSDKWithAppID:appID adData:adData];
-        }
-        else {
-            __weak typeof(self)weakSelf = self;
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                [weakSelf setupStartioSDKWithAppID:appID adData:adData];
-            });
-        }
+        __weak typeof(self)weakSelf = self;
+        [self executeBlockOnMainThread:^{
+            [weakSelf setupStartioSDKWithAppID:appID adData:adData];
+        }];
+        
         if ([delegate respondsToSelector:@selector(onInitDidSucceed)]) {
             [delegate onInitDidSucceed];
         }
@@ -69,10 +65,24 @@
 
 #pragma mark ISAdapterConsentProtocol methods
 - (void)setConsent:(BOOL)consent {
-    STAStartAppSDK *sdk = [STAStartAppSDK sharedInstance];
-    [sdk handleExtras:^(NSMutableDictionary<NSString *,id> *extras) {
-        extras[@"medPas"] = @(consent);
+    [self executeBlockOnMainThread:^{
+        STAStartAppSDK *sdk = [STAStartAppSDK sharedInstance];
+        [sdk handleExtras:^(NSMutableDictionary<NSString *,id> *extras) {
+            extras[@"medPas"] = @(consent);
+        }];
     }];
+}
+
+#pragma mark Helper methods
+- (void)executeBlockOnMainThread:(void(^)(void))block {
+    if ([NSThread isMainThread]) {
+        block();
+    }
+    else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            block();
+        });
+    }
 }
 
 @end
