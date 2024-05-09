@@ -10,9 +10,9 @@
 #import "InterstitialDelegateAdapter.h"
 
 #define USERID @"demoapp"
-#define APPKEY @"1418f3da9"
+#define APPKEY @"121eb220d"
 
-@interface ViewController () <LevelPlayRewardedVideoDelegate, InterstitialDelegateAdapterDelegate, ISOfferwallDelegate, LevelPlayBannerDelegate, ISImpressionDataDelegate>
+@interface ViewController () <LevelPlayRewardedVideoDelegate, InterstitialDelegateAdapterDelegate, LevelPlayBannerDelegate, ISImpressionDataDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *showRVButton;
 @property (weak, nonatomic) IBOutlet UIButton *showOWButton;
@@ -104,13 +104,6 @@
     // call 'showRV'. In this case the SDK will use the default
     // placement one created for you.
     [IronSource showRewardedVideoWithViewController:self];
-}
-
-- (IBAction)showOWButtonTapped:(id)sender {
-    
-    // This will present the Offerwall. Unlike Rewarded
-    // Videos there are no placements.
-    [IronSource showOfferwallWithViewController:self];
 }
 
 - (IBAction)showISButtonTapped:(id)sender {
