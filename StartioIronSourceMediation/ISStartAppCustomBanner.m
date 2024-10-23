@@ -18,6 +18,7 @@
 #import "ISStartAppCustomBanner.h"
 #import "IronSource/ISAdapterErrors.h"
 #import "ISStartAppExtras.h"
+#import "ISStartAppMainThreadDispatcher.h"
 
 @interface STABannerToISCallbacksAdapter : NSObject<STABannerDelegateProtocol>
 @property (nonatomic) id<ISBannerAdDelegate> isBannerAdDelegate;
@@ -44,10 +45,11 @@
           size:(ISBannerSize *)size
         delegate:(nonnull id<ISBannerAdDelegate>)delegate {
     
-    dispatch_block_t performBlock = ^{
+    __weak typeof(self)weakSelf = self;
+    [ISStartAppMainThreadDispatcher dispatchSyncBlock:^{
         STABannerSize staSizeToLoad;
         NSValue *staBannerSizeAsValue = [size com_sta_sizeWithContainingViewController:viewController];
-        if (nil == staBannerSizeAsValue) {
+        if (staBannerSizeAsValue == nil) {
             if ([delegate respondsToSelector:@selector(adDidFailToLoadWithErrorType:errorCode:errorMessage:)]) {
                 [delegate adDidFailToLoadWithErrorType:ISAdapterErrorTypeInternal
                                              errorCode:ISAdapterErrorInternal
@@ -60,12 +62,8 @@
         ISStartAppExtras *extras = [[ISStartAppExtras alloc] initWithParamsDictionary:adData.configuration];
         STAAdPreferences *adPrefs = extras.prefs;
         
-        [self performBannerLoadWitnSize:staSizeToLoad preferences:adPrefs delegate:delegate];
-    };
-    
-    if (NSThread.isMainThread) {
-        performBlock();
-    } else dispatch_async(dispatch_get_main_queue(), performBlock);
+        [weakSelf performBannerLoadWitnSize:staSizeToLoad preferences:adPrefs delegate:delegate];
+    }];
 }
 
 - (void)performBannerLoadWitnSize:(STABannerSize)bannerSize preferences:(STAAdPreferences *)preferences delegate:(nonnull id<ISBannerAdDelegate>) delegate {

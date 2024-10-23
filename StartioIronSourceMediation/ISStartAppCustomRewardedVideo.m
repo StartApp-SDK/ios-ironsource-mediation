@@ -18,6 +18,7 @@
 #import "IronSource/ISAdapterErrors.h"
 #import "ISStartAppCustomRewardedVideo.h"
 #import "ISStartAppExtras.h"
+#import "ISStartAppMainThreadDispatcher.h"
 
 @interface ISStartAppCustomRewardedVideo() <STADelegateProtocol>
 @property (nonatomic, strong) STAStartAppAd *rewardedAd;
@@ -28,29 +29,24 @@
 
 - (void)loadAdWithAdData:(ISAdData *)adData
                 delegate:(id<ISRewardedVideoAdDelegate>)delegate {
-    self.delegate = delegate;
-    if ([NSThread isMainThread]) {
-        [self loadAdWithAdData:adData];
-    }
-    else {
-        __weak typeof(self)weakSelf = self;
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [weakSelf loadAdWithAdData:adData];
-        });
-    }
-}
-
-- (void)loadAdWithAdData:(ISAdData *)adData {
-    ISStartAppExtras *extras = [[ISStartAppExtras alloc] initWithParamsDictionary:adData.configuration];
-    self.rewardedAd = [[STAStartAppAd alloc] init];
-    [self.rewardedAd loadRewardedVideoAdWithDelegate:self withAdPreferences:extras.prefs];
+    __weak typeof(self)weakSelf = self;
+    [ISStartAppMainThreadDispatcher dispatchSyncBlock:^{
+        weakSelf.delegate = delegate;
+        
+        ISStartAppExtras *extras = [[ISStartAppExtras alloc] initWithParamsDictionary:adData.configuration];
+        weakSelf.rewardedAd = [[STAStartAppAd alloc] init];
+        [weakSelf.rewardedAd loadRewardedVideoAdWithDelegate:weakSelf withAdPreferences:extras.prefs];
+    }];
 }
 
 - (void)showAdWithViewController:(UIViewController *)viewController
                           adData:(ISAdData *)adData
                         delegate:(id<ISRewardedVideoAdDelegate>)delegate {
-    self.delegate = delegate;
-    [self.rewardedAd showAd];
+    __weak typeof(self)weakSelf = self;
+    [ISStartAppMainThreadDispatcher dispatchSyncBlock:^{
+        weakSelf.delegate = delegate;
+        [weakSelf.rewardedAd showAd];
+    }];
 }
 
 - (BOOL)isAdAvailableWithAdData:(ISAdData*)adData {

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-#ifndef ISStartAppConstants_h
-#define ISStartAppConstants_h
+#import <Foundation/Foundation.h>
 
-NSString *const ISStartAppAdapterVersion = @"1.1.2";
+NS_ASSUME_NONNULL_BEGIN
 
-NSString *const ISStartAppKeyAppID = @"appId";
+@interface ISStartAppMainThreadDispatcher : NSObject
++ (void)dispatchSyncBlock:(void(^)(void))block;
++ (id)dispatchSyncBlockWithReturn:(id _Nullable (^)(void))block;
+@end
 
-#endif /* ISStartAppConstants_h */
+NS_ASSUME_NONNULL_END

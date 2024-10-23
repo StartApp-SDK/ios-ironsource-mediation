@@ -18,6 +18,7 @@
 #import "IronSource/ISAdapterErrors.h"
 #import "ISStartAppCustomAdapter.h"
 #import "ISStartAppConstants.h"
+#import "ISStartAppMainThreadDispatcher.h"
 
 @implementation ISStartAppCustomAdapter
 
@@ -31,7 +32,7 @@
     }
     else {
         __weak typeof(self)weakSelf = self;
-        [self executeBlockOnMainThread:^{
+        [ISStartAppMainThreadDispatcher dispatchSyncBlock:^{
             [weakSelf setupStartioSDKWithAppID:appID adData:adData];
         }];
         
@@ -48,14 +49,9 @@
 }
 
 - (NSString *)networkSDKVersion {
-    if ([NSThread isMainThread] == NO) {
-        __block NSString *version = nil;
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            version = [[STAStartAppSDK sharedInstance] version];
-        });
-        return version;
-    }
-    return [[STAStartAppSDK sharedInstance] version];
+    return [ISStartAppMainThreadDispatcher dispatchSyncBlockWithReturn:^id _Nullable{
+        return [[STAStartAppSDK sharedInstance] version];
+    }];
 }
 
 - (NSString *)adapterVersion {
@@ -64,24 +60,12 @@
 
 #pragma mark ISAdapterConsentProtocol methods
 - (void)setConsent:(BOOL)consent {
-    [self executeBlockOnMainThread:^{
+    [ISStartAppMainThreadDispatcher dispatchSyncBlock:^{
         STAStartAppSDK *sdk = [STAStartAppSDK sharedInstance];
         [sdk handleExtras:^(NSMutableDictionary<NSString *,id> *extras) {
             extras[@"medPas"] = @(consent);
         }];
     }];
-}
-
-#pragma mark Helper methods
-- (void)executeBlockOnMainThread:(void(^)(void))block {
-    if ([NSThread isMainThread]) {
-        block();
-    }
-    else {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            block();
-        });
-    }
 }
 
 @end
