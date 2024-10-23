@@ -18,6 +18,7 @@
 #import "IronSource/ISAdapterErrors.h"
 #import "ISStartAppCustomInterstitial.h"
 #import "ISStartAppExtras.h"
+#import "ISStartAppMainThreadDispatcher.h"
 
 @interface ISStartAppCustomInterstitial() <STADelegateProtocol>
 @property (nonatomic, strong) STAStartAppAd *interstitialAd;
@@ -27,28 +28,23 @@
 @implementation ISStartAppCustomInterstitial
 
 - (void)loadAdWithAdData:(ISAdData *)adData
-                delegate:(id<ISInterstitialAdDelegate>)delegate {
-    self.delegate = delegate;
-    if ([NSThread isMainThread]) {
-        [self loadAdWithAdData:adData];
-    }
-    else {
-        __weak typeof(self)weakSelf = self;
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [weakSelf loadAdWithAdData:adData];
-        });
-    }
-}
-
-- (void)loadAdWithAdData:(ISAdData *)adData {
-    ISStartAppExtras *extras = [[ISStartAppExtras alloc] initWithParamsDictionary:adData.configuration];
-    self.interstitialAd = [[STAStartAppAd alloc] init];
-    [self.interstitialAd loadAdWithDelegate:self withAdPreferences:extras.prefs];
+                delegate:(id<ISInterstitialAdDelegate>)delegate {    
+    __weak typeof(self)weakSelf = self;
+    [ISStartAppMainThreadDispatcher dispatchSyncBlock:^{
+        weakSelf.delegate = delegate;
+        
+        ISStartAppExtras *extras = [[ISStartAppExtras alloc] initWithParamsDictionary:adData.configuration];
+        weakSelf.interstitialAd = [[STAStartAppAd alloc] init];
+        [weakSelf.interstitialAd loadAdWithDelegate:weakSelf withAdPreferences:extras.prefs];
+    }];
 }
 
 - (void)showAdWithViewController:(UIViewController *)viewController adData:(ISAdData *)adData delegate:(id<ISInterstitialAdDelegate>)delegate {
-    self.delegate = delegate;
-    [self.interstitialAd showAd];
+    __weak typeof(self)weakSelf = self;
+    [ISStartAppMainThreadDispatcher dispatchSyncBlock:^{
+        weakSelf.delegate = delegate;
+        [weakSelf.interstitialAd showAd];
+    }];
 }
 
 - (BOOL)isAdAvailableWithAdData:(ISAdData*)adData {
