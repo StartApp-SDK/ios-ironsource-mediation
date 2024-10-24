@@ -12,7 +12,7 @@ Pod::Spec.new do |spec|
   spec.license      = { :type => "Apache License, Version 2.0", :file => "LICENSE" }
   spec.author       = { "iOS Dev" => "iosdev@startapp.com" }
   
-  spec.platform     = :ios, "11.0"
+  spec.platform     = :ios, "12.0"
   spec.source       = { :git => "https://github.com/StartApp-SDK/ios-ironsource-mediation.git", :tag => spec.version.to_s }
   spec.source_files = "StartioIronSourceMediation/*.*"
   spec.frameworks   = "Foundation", "UIKit"
