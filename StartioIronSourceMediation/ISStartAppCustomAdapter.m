@@ -26,6 +26,11 @@
 - (void)init:(ISAdData *)adData delegate:(id<ISNetworkInitializationDelegate>)delegate {
     NSString *appID = adData.configuration[ISStartAppKeyAppID];
     if (appID.length == 0) {
+        ISAdapterConfig *adapterConfig = adData.adUnitData[ISStartAppKeyAdapterConfig];
+        appID = adapterConfig.appSettings[ISStartAppKeyAppID];
+    }
+    
+    if (appID.length == 0) {
         if ([delegate respondsToSelector:@selector(onInitDidFailWithErrorCode:errorMessage:)]) {
             [delegate onInitDidFailWithErrorCode:ISAdapterErrorMissingParams errorMessage:@"Missing StartAppSDK AppID parameter"];
         }
