@@ -3,5 +3,4 @@ use_frameworks!
 
 target 'IronSourceDemoApp' do
   pod 'startio-ironsource-mediation', :path => '../'
-  pod 'IronSourceAdQualitySDK','7'
 end
