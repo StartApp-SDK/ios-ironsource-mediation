@@ -15,8 +15,13 @@
  */
 
 #import <UIKit/UIKit.h>
+#import <IronSource/IronSource.h>
 
-@interface ViewController : UIViewController
+NS_ASSUME_NONNULL_BEGIN
 
+@interface NativeAdView : UIView
+@property (nonatomic, strong) ISNativeAdView *nativeAdView;
+- (void)populateWithContent:(nonnull LevelPlayNativeAd *)nativeAd;
 @end
 
+NS_ASSUME_NONNULL_END

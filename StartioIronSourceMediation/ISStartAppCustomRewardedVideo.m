@@ -88,9 +88,6 @@
     if ([self.delegate respondsToSelector:@selector(adDidBecomeVisible)]) {
         [self.delegate adDidBecomeVisible];
     }
-    if ([self.delegate respondsToSelector:@selector(adDidShowSucceed)]) {
-        [self.delegate adDidShowSucceed];
-    }
 }
 
 - (void)didCompleteVideo:(STAAbstractAd *)ad {

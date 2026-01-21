@@ -1,13 +1,24 @@
-//
-//  AppDelegate.m
-//  IronSourceDemoApp
-//
-//  Copyright © 2017 IronSource. All rights reserved.
-//
+/**
+ * Copyright 2026 Start.io Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #import "AppDelegate.h"
 #import <AppTrackingTransparency/AppTrackingTransparency.h>
 #import <IronSource/IronSource.h>
+
+#define APPKEY @"<APP_KEY>"
 
 @interface AppDelegate ()
 
@@ -19,6 +30,18 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Calling 'sharedInstance' for the first time initializes the SDK variables, but it does not initiate network
     // traffic. We recommend calling it as early as possible, but it is not necessary.
+    
+    LPMInitRequestBuilder *requestBuilder = [[LPMInitRequestBuilder alloc] initWithAppKey:APPKEY];
+    
+    LPMInitRequest *initRequest = [requestBuilder build];
+    [LevelPlay initWithRequest:initRequest completion:^(LPMConfiguration *_Nullable config, NSError *_Nullable error){
+        if(error) {
+            NSLog(@"Failed to initialize LevelPlay with error: %@", error.localizedDescription);
+        } else {
+            [LevelPlay setMetaDataWithKey:@"is_test_suite" value:@"enable"];
+        }
+    }];
+    
     return YES;
 }
 
@@ -37,10 +60,10 @@
         [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
             NSLog(@"App tracking transparency authorization status: %d", (int)status);
             if (status == ATTrackingManagerAuthorizationStatusAuthorized) {
-                [IronSource setConsent:YES];
+                [LevelPlay setConsent:YES];
             }
             else {
-                [IronSource setConsent:NO];
+                [LevelPlay setConsent:NO];
             }
         }];
     }

@@ -15,7 +15,8 @@
 		72E0D6581E267513009ABC1B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 72E0D6491E267513009ABC1B /* Main.storyboard */; };
 		72E0D65E1E267513009ABC1B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 72E0D6541E267513009ABC1B /* ViewController.m */; };
 		72E0D6601E2675C7009ABC1B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 72E0D65F1E2675C7009ABC1B /* main.m */; };
-		D30D9EBE2AA0FE5D0055B520 /* InterstitialDelegateAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = D30D9EBC2AA0FE5C0055B520 /* InterstitialDelegateAdapter.m */; };
+		BB03AA012F21328A004A4A1A /* NativeAdView.m in Sources */ = {isa = PBXBuildFile; fileRef = BB03AA002F21328A004A4A1A /* NativeAdView.m */; };
+		BB03AA562F2135CC004A4A1A /* ISNativeAdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB03AA552F2135CC004A4A1A /* ISNativeAdView.xib */; };
 		E80C8FB61C16E48200CF3C27 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E80C8FB41C16E48200CF3C27 /* AVFoundation.framework */; };
 		E80C8FB71C16E48200CF3C27 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E80C8FB51C16E48200CF3C27 /* Foundation.framework */; };
 		E80C8FBD1C16E4A000CF3C27 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E80C8FB81C16E4A000CF3C27 /* CoreGraphics.framework */; };
@@ -44,8 +45,10 @@
 		72E0D6541E267513009ABC1B /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		72E0D65F1E2675C7009ABC1B /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = IronSourceDemoApp/main.m; sourceTree = SOURCE_ROOT; };
 		72E0D6611E267AFB009ABC1B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D30D9EBC2AA0FE5C0055B520 /* InterstitialDelegateAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterstitialDelegateAdapter.m; sourceTree = "<group>"; };
-		D30D9EBD2AA0FE5D0055B520 /* InterstitialDelegateAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterstitialDelegateAdapter.h; sourceTree = "<group>"; };
+		BB03A9FF2F21328A004A4A1A /* NativeAdView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NativeAdView.h; sourceTree = "<group>"; };
+		BB03AA002F21328A004A4A1A /* NativeAdView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NativeAdView.m; sourceTree = "<group>"; };
+		BB03AA2B2F21345D004A4A1A /* modern-objc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "modern-objc.h"; sourceTree = "<group>"; };
+		BB03AA552F2135CC004A4A1A /* ISNativeAdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ISNativeAdView.xib; sourceTree = "<group>"; };
 		E80C8F981C16E28400CF3C27 /* IronSourceDemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IronSourceDemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E80C8FB41C16E48200CF3C27 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		E80C8FB51C16E48200CF3C27 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -93,16 +96,18 @@
 		72E0D6431E267513009ABC1B /* IronSourceDemoApp */ = {
 			isa = PBXGroup;
 			children = (
-				D30D9EBD2AA0FE5D0055B520 /* InterstitialDelegateAdapter.h */,
-				D30D9EBC2AA0FE5C0055B520 /* InterstitialDelegateAdapter.m */,
 				72E0D6441E267513009ABC1B /* AppDelegate.h */,
 				72E0D6451E267513009ABC1B /* AppDelegate.m */,
 				72E0D6531E267513009ABC1B /* ViewController.h */,
 				72E0D6541E267513009ABC1B /* ViewController.m */,
+				BB03A9FF2F21328A004A4A1A /* NativeAdView.h */,
+				BB03AA002F21328A004A4A1A /* NativeAdView.m */,
 				72E0D6461E267513009ABC1B /* Assets.xcassets */,
+				BB03AA552F2135CC004A4A1A /* ISNativeAdView.xib */,
 				72E0D6471E267513009ABC1B /* LaunchScreen.storyboard */,
 				72E0D6491E267513009ABC1B /* Main.storyboard */,
 				72E0D6611E267AFB009ABC1B /* Info.plist */,
+				BB03AA2B2F21345D004A4A1A /* modern-objc.h */,
 			);
 			path = IronSourceDemoApp;
 			sourceTree = "<group>";
@@ -226,6 +231,7 @@
 			files = (
 				72E0D6561E267513009ABC1B /* Assets.xcassets in Resources */,
 				72E0D6581E267513009ABC1B /* Main.storyboard in Resources */,
+				BB03AA562F2135CC004A4A1A /* ISNativeAdView.xib in Resources */,
 				72E0D6571E267513009ABC1B /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -237,7 +243,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D30D9EBE2AA0FE5D0055B520 /* InterstitialDelegateAdapter.m in Sources */,
+				BB03AA012F21328A004A4A1A /* NativeAdView.m in Sources */,
 				72E0D65E1E267513009ABC1B /* ViewController.m in Sources */,
 				72E0D6601E2675C7009ABC1B /* main.m in Sources */,
 				72E0D6551E267513009ABC1B /* AppDelegate.m in Sources */,

@@ -73,12 +73,6 @@
     }
 }
 
-- (void)didShowAd:(STAAbstractAd *)ad {
-    if ([self.delegate respondsToSelector:@selector(adDidShowSucceed)]) {
-        [self.delegate adDidShowSucceed];
-    }
-}
-
 - (void)didSendImpression:(STAAbstractAd *)ad {
     if ([self.delegate respondsToSelector:@selector(adDidOpen)]) {
         [self.delegate adDidOpen];

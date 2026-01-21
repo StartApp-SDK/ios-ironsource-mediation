@@ -1,357 +1,247 @@
-//
-//  ViewController.m
-//  IronSourceDemoApp
-//
-//  Copyright © 2017 IronSource. All rights reserved.
-//
+/**
+ * Copyright 2026 Start.io Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #import "ViewController.h"
+#import "NativeAdView.h"
+#import "modern-objc.h"
 #import <IronSource/IronSource.h>
-#import "InterstitialDelegateAdapter.h"
-#import <StartApp/StartApp.h>
 
-#define USERID @"demoapp"
-#define APPKEY @"121eb220d"
+static let kInterstitialUnitId = @"<INTERSTITIAL_UNIT_ID>";
+static let kRewardedUnitId = @"<REWARDED_UNIT_ID>";
+static let kNativeUnitId = @"<NATIVE_UNIT_ID>";
+static let kBannerUnitId = @"<BANNER_UNIT_ID>";
+static let kMrecUnitId = @"<MREC_UNIT_ID>";
 
-@interface ViewController () <LevelPlayRewardedVideoDelegate, InterstitialDelegateAdapterDelegate, LevelPlayBannerDelegate, ISImpressionDataDelegate>
+@interface ViewController () <LPMInterstitialAdDelegate, LPMRewardedAdDelegate, LPMBannerAdViewDelegate, LevelPlayNativeAdDelegate>
 
-@property (weak, nonatomic) IBOutlet UIButton *showRVButton;
-@property (weak, nonatomic) IBOutlet UIButton *showOWButton;
-@property (weak, nonatomic) IBOutlet UIButton *showISButton;
-@property (weak, nonatomic) IBOutlet UIButton *loadISButton;
-@property (weak, nonatomic) IBOutlet UILabel  *versionLabel;
+@property (weak, nonatomic) IBOutlet UITextView* messageTextView;
+@property (weak, nonatomic) IBOutlet UIButton* showInterstitialButton;
+@property (weak, nonatomic) IBOutlet UIButton* showRewardedButton;
+@property (weak, nonatomic) IBOutlet UIButton* showNativeButton;
 
-@property (nonatomic, strong) ISPlacementInfo   *rvPlacementInfo;
-@property (nonatomic, strong) ISBannerView      *bannerView;
+@property (nonatomic, nullable) LPMInterstitialAd *interstitialAd;
+@property (nonatomic, nullable) LPMRewardedAd *rewardedAd;
+@property (nonatomic, nullable) LPMBannerAdView *bannerAd;
+@property (nonatomic, nullable) LevelPlayNativeAd *nativeAd;
+@property (nonatomic, nullable) NativeAdView  *nativeAdView;
 
-@property (nonatomic) InterstitialDelegateAdapter *interstitialDelegateAdapter;
+
+@property (nonatomic) BOOL needToStrechInlineView;
 
 @end
 
 @implementation ViewController
 
-#pragma mark -
-#pragma mark Lifecycle Methods
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    //The integrationHelper is used to validate the integration. Remove the integrationHelper before going live!
-    [ISIntegrationHelper validateIntegration];
-    
-    // UI setup
-    self.versionLabel.text = [NSString stringWithFormat:@"sdk version %@", [IronSource sdkVersion]];
-    
-    for (UIButton *button in @[self.showISButton/*, self.showOWButton*/, self.showRVButton, self.loadISButton]) {
-        button.layer.cornerRadius = 17.0f;
-        button.layer.masksToBounds = YES;
-        button.layer.borderWidth = 3.5f;
-        button.layer.borderColor = [[UIColor grayColor] CGColor];
-    }
-    
-    [ISSupersonicAdsConfiguration configurations].useClientSideCallbacks = @(YES);
-    
-    // Before initializing any of our products (Rewarded video, Offerwall, Interstitial or Banner) you must set
-    // their delegates. Take a look at each of there delegates method and you will see that they each implement a product
-    // protocol. This is our way of letting you know what's going on, and if you don't set the delegates
-    // we will not be able to communicate with you.
-    // We're passing 'self' to our delegates because we want
-    // to be able to enable/disable buttons to match ad availability.
-    
-    [IronSource setLevelPlayRewardedVideoDelegate:self];
-    InterstitialDelegateAdapter *interstitialDelegateAdapter = [InterstitialDelegateAdapter new];
-    interstitialDelegateAdapter.delegate = self;
-    self.interstitialDelegateAdapter = interstitialDelegateAdapter;
-    [IronSource setLevelPlayInterstitialDelegate:interstitialDelegateAdapter];
-    [IronSource setLevelPlayBannerDelegate:self];
-    [IronSource addImpressionDataDelegate:self];
-
-    NSString *userId = [IronSource advertiserId];
-    
-    if([userId length] == 0){
-        //If we couldn't get the advertiser id, we will use a default one.
-        userId = USERID;
-    }
-    
-    // After setting the delegates you can go ahead and initialize the SDK.
-    [IronSource setUserId:userId];
-    
-    [IronSource initWithAppKey:APPKEY adUnits:@[IS_REWARDED_VIDEO, IS_INTERSTITIAL, IS_BANNER]];
-    [STAStartAppSDK sharedInstance].testAdsEnabled = YES;
-    // To initialize specific ad units:
-    // [IronSource initWithAppKey:APPKEY adUnits:@[IS_REWARDED_VIDEO, IS_INTERSTITIAL, IS_OFFERWALL, IS_BANNER]];
-    
-    // Scroll down the file to find out what happens when you click a button...
-    
-    /* 
-     * Banner integration
-     * To finalize your banner integration, you must integrate at least one of our mediation adapters that have banner.
-     */
-    [self loadBanner];
+    // Do any additional setup after loading the view.
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+#pragma mark - Interstitial
 
-#pragma mark -
-#pragma mark Interface Handling
-
-- (IBAction)showRVButtonTapped:(id)sender {
+- (IBAction)loadInterstitial:(UIButton*)sender {
+    self.interstitialAd = [[LPMInterstitialAd alloc] initWithAdUnitId:kInterstitialUnitId];
+    self.interstitialAd.delegate = self;
     
-    // After calling 'setRVDelegate' and 'initRVWithAppKey:withUserId'
-    // you are ready to present an ad. You can supply a placement
-    // by calling 'showRVWithPlacementName', or you can simply
-    // call 'showRV'. In this case the SDK will use the default
-    // placement one created for you.
-    [IronSource showRewardedVideoWithViewController:self];
+    // Load the first ad
+    [self.interstitialAd loadAd];
 }
 
-- (IBAction)showISButtonTapped:(id)sender {
-    
-    // This will present the Interstitial. Unlike Rewarded
-    // Videos there are no placements.
-    [IronSource showInterstitialWithViewController:self];
-}
-
-- (IBAction)loadISButtonTapped:(id)sender {
-    // This will load the Interstitial. Unlike Rewarded
-    // Videos there are no placements.
-    [IronSource loadInterstitial];
-}
-
-- (void)loadBanner {
-
-    // We call destroy banner before loading a new banner
-    if (self.bannerView) {
-        [self destroyBanner];
-    }
-    
-    // This will load the Banner. You can supply a placement
-    // by calling 'loadBannerWithViewController:size:placement', or you can simply
-    // call 'loadBannerWithViewController:size'. In this case the SDK will use the default
-    // placement one created for you.
-    // You can pick any banner size : ISBannerSize_BANNER, ISBannerSize_LARGE, IS_AD_SIZE_RECTANGLE
-    [IronSource loadBannerWithViewController:self
-                                        size:ISBannerSize_BANNER];
-}
-
-- (void)destroyBanner {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.bannerView) {
-            [IronSource destroyBanner:self.bannerView];
-            self.bannerView = nil;
-        }
-    });
-}
-#pragma mark - Rewarded Video Delegate Functions
-
-// This method lets you know whether or not there is a video
-// ready to be presented. It is only after this method is invoked
-- (void)hasAvailableAdWithAdInfo:(ISAdInfo *)adInfo {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.showRVButton setEnabled:YES];
-    });
-}
-
-- (void)hasNoAvailableAd {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.showRVButton setEnabled:NO];
-    });
-}
-
-// This method gets invoked after the user has been rewarded.
-- (void)didReceiveRewardForPlacement:(ISPlacementInfo *)placementInfo withAdInfo:(ISAdInfo *)adInfo {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    self.rvPlacementInfo = placementInfo;
-}
-
-// This method gets invoked when there is a problem playing the video.
-// If it does happen, check out 'error' for more information and consult
-// our knowledge center for help.
-- (void)didFailToShowWithError:(NSError *)error andAdInfo:(ISAdInfo *)adInfo {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-}
-
-// This method gets invoked when we take control, but before
-// the video has started playing.
-- (void)didOpenWithAdInfo:(ISAdInfo *)adInfo {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-}
-
-// This method gets invoked when we return controlback to your hands.
-// We chose to notify you about rewards here and not in 'didReceiveRewardForPlacement'.
-// This is because reward can occur in the middle of the video.
-- (void)didCloseWithAdInfo:(ISAdInfo *)adInfo {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    if (self.rvPlacementInfo) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Video Reward" message:[NSString stringWithFormat:@"You have been rewarded %d %@", [self.rvPlacementInfo.rewardAmount intValue], self.rvPlacementInfo.rewardName] preferredStyle: UIAlertControllerStyleAlert];
-        __weak typeof(self) weakSelf = self;
-        UIAlertAction *action = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-            [weakSelf dismissViewControllerAnimated:true completion:nil];
-        }];
-        [self presentViewController:alert animated:YES completion:nil];
-        [alert addAction:action];
-        self.rvPlacementInfo = nil;
+- (IBAction)showInterstitial:(UIButton*)sender {
+    if ([self.interstitialAd isAdReady]) {
+        [self.interstitialAd showAdWithViewController:self placementName:@"Interstitial"];
     }
 }
 
-// This method gets invoked after a video has been clicked
-- (void)didClick:(ISPlacementInfo *)placementInfo withAdInfo:(ISAdInfo *)adInfo {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
+#pragma mark - Rewarded
+
+- (IBAction)loadRewarded:(UIButton*)sender {
+    self.rewardedAd = [[LPMRewardedAd alloc] initWithAdUnitId:kRewardedUnitId];
+    self.rewardedAd.delegate = self;
+    
+    // Load the first ad
+    [self.rewardedAd loadAd];
 }
 
-#pragma mark - Offerwall Delegate Functions
-
-// This method gets invoked after the availability of the Offerwall changes.
-- (void)offerwallHasChangedAvailability:(BOOL)available {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.showOWButton setEnabled:available];
-    });
+- (IBAction)showRewarded:(UIButton*)sender {
+    if ([self.rewardedAd isAdReady]) {
+        [self.rewardedAd showAdWithViewController:self placementName:@"Rewarded"];
+    }
 }
 
-// This method gets invoked each time the Offerwall loaded successfully.
-- (void)offerwallDidShow {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+#pragma mark - Native
+
+- (IBAction)loadNative:(UIButton*)sender {
+    self.nativeAd = [[[[LevelPlayNativeAdBuilder new] withViewController:self] withPlacementName:@"Native"] withDelegate:self].build;
+    [self.nativeAd loadAd];
+    
+    self.nativeAdView = [[NativeAdView alloc] init];
 }
 
-// This method gets invoked after a failed attempt to load the Offerwall.
-// If it does happen, check out 'error' for more information and consult our
-// Knowledge center.
-- (void)offerwallDidFailToShowWithError:(NSError *)error {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+- (IBAction)showNative:(UIButton*)sender {
+    [self cleanBottomEdge];
+    self.showNativeButton.enabled = NO;
+    [self addViewCenteredOnBottomEdge:self.nativeAdView withSize:CGSizeMake(300, 250)];
 }
 
-// This method gets invoked after the user had clicked the little
-// 'x' button at the top-right corner of the screen.
-- (void)offerwallDidClose {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+#pragma mark - Banner
+
+- (IBAction)loadBanner:(UIButton*)sender {
+    [self cleanBottomEdge];
+    
+    // Create ad configuration - optional
+    LPMBannerAdViewConfigBuilder *adConfigBuilder = [LPMBannerAdViewConfigBuilder new];
+    [adConfigBuilder setWithAdSize:LPMAdSize.bannerSize];
+    [adConfigBuilder setWithPlacementName:@"Banner"];
+    LPMBannerAdViewConfig *adConfig = [adConfigBuilder build];
+    
+    // Create the banner view and set the ad unit id
+    self.bannerAd = [[LPMBannerAdView alloc] initWithAdUnitId:kBannerUnitId config:adConfig];
+    [self.bannerAd setDelegate:self];
+    [self.bannerAd loadAdWithViewController:self];
 }
 
-// This method will be called each time the user has completed an offer.
-// All relative information is stored in 'creditInfo' and it is
-// specified in more detail in 'SupersonicOWDelegate.h'.
-// If you return NO the credit for the last offer will be added to
-// Everytime you return 'NO' we aggragate the credit and return it all
-// at one time when you return 'YES'.
-- (BOOL)didReceiveOfferwallCredits:(NSDictionary *)creditInfo {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
-    return YES;
+#pragma mark - MREC
+
+- (IBAction)loadMREC:(UIButton*)sender {
+    [self cleanBottomEdge];
+    
+    // Create ad configuration - optional
+    LPMBannerAdViewConfigBuilder *adConfigBuilder = [LPMBannerAdViewConfigBuilder new];
+    [adConfigBuilder setWithAdSize:LPMAdSize.mediumRectangleSize];
+    [adConfigBuilder setWithPlacementName:@"MRec"];
+    LPMBannerAdViewConfig *adConfig = [adConfigBuilder build];
+    
+    // Create the banner view and set the ad unit id
+    self.bannerAd = [[LPMBannerAdView alloc] initWithAdUnitId:kMrecUnitId config:adConfig];
+    [self.bannerAd setDelegate:self];
+    [self.bannerAd loadAdWithViewController:self];
 }
 
-// This method get invoked when the ‘-getOWCredits’ fails to retrieve
-// the user's credit balance info.
-- (void)didFailToReceiveOfferwallCreditsWithError:(NSError *)error {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+#pragma mark - Utils
+
+- (void)addViewCenteredOnBottomEdge:(UIView*)view withSize:(CGSize)size {
+    [self addViewAnimated:view];
+    [NSLayoutConstraint activateConstraints:@[
+        [view.widthAnchor constraintEqualToConstant:size.width],
+        [view.heightAnchor constraintEqualToConstant:size.height],
+        [view.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor],
+        [view.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor]
+    ]];
 }
 
-#pragma mark - Interstitial Delegate Functions
-
-- (void)interstitialDidLoad {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.showISButton setEnabled:YES];
-    });
+- (void)addViewStretchedOnBottomEdge:(UIView*)view height:(CGFloat)height {
+    [self addViewAnimated:view];
+    [NSLayoutConstraint activateConstraints:@[
+        [view.leadingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.leadingAnchor],
+        [view.trailingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor],
+        [view.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor],
+        [view.heightAnchor constraintEqualToConstant:height]
+    ]];
 }
 
-- (void)interstitialDidFailToLoadWithError:(NSError *)error {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.showISButton setEnabled:NO];
-    });
+- (void)addViewAnimated:(UIView*)view {
+    view.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:view];
+    
+    view.alpha = 0;
+    [UIView animateWithDuration:1.0 animations:^{
+        view.alpha = 1;
+    }];
 }
 
-- (void)interstitialDidOpen {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+- (void)cleanBottomEdge {
+    [self.bannerAd removeFromSuperview];
+    [self.nativeAdView removeFromSuperview];
 }
 
-// The method will be called each time the Interstitial windows has opened successfully.
-- (void)interstitialDidShow {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+- (void)logMessage:(nonnull NSString*)message {
+    [self.messageTextView insertText:[@"\n" stringByAppendingString:message]];
+    let bottom = NSMakeRange(self.messageTextView.text.length - 1, 1);
+    [self.messageTextView scrollRangeToVisible:bottom];
+    
+    NSLog(@"%@", message);
 }
 
-// This method gets invoked after a failed attempt to load Interstitial.
-// If it does happen, check out 'error' for more information and consult our
-// Knowledge center.
-- (void)interstitialDidFailToShowWithError:(NSError *)error {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+- (void)enable:(BOOL)enable showButtonForAdUnit:(nonnull NSString *)adUnit {
+    if ([adUnit isEqualToString:kInterstitialUnitId]) {
+        self.showInterstitialButton.enabled = enable;
+    }
+    else if ([adUnit isEqualToString:kRewardedUnitId]) {
+        self.showRewardedButton.enabled = enable;
+    }
+    else if ([adUnit isEqualToString:kNativeUnitId]) {
+        self.showNativeButton.enabled = enable;
+    }
 }
 
-// This method will be called each time the user had clicked the Interstitial ad.
-- (void)didClickInterstitial {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+#pragma mark - LPMInterstitialAdDelegate Methods
+- (void)didLoadAdWithAdInfo:(LPMAdInfo *)adInfo {
+    [self enable:YES showButtonForAdUnit:adInfo.adUnitId];
+    if ([adInfo.adUnitId isEqualToString:kBannerUnitId]) {
+        [self addViewStretchedOnBottomEdge:self.bannerAd height:LPMAdSize.bannerSize.height];
+    }
+    else if ([adInfo.adUnitId isEqualToString:kMrecUnitId]) {
+        [self addViewStretchedOnBottomEdge:self.bannerAd height:LPMAdSize.mediumRectangleSize.height];
+    }
+}
+- (void)didFailToLoadAdWithAdUnitId:(NSString *)adUnitId error:(NSError *)error {
+    [self logMessage:NSStringFromSelector(_cmd)];
+    [self enable:NO showButtonForAdUnit:adUnitId];
+}
+- (void)didDisplayAdWithAdInfo:(LPMAdInfo *)adInfo {
+    [self logMessage:NSStringFromSelector(_cmd)];
+    [self enable:NO showButtonForAdUnit:adInfo.adUnitId];
+}
+- (void)didFailToDisplayAdWithAdInfo:(LPMAdInfo *)adInfo error:(NSError *)error {
+    [self logMessage:NSStringFromSelector(_cmd)];
+    [self enable:NO showButtonForAdUnit:adInfo.adUnitId];
+}
+- (void)didClickAdWithAdInfo:(LPMAdInfo *)adInfo {
+    [self logMessage:NSStringFromSelector(_cmd)];
+}
+- (void)didCloseAdWithAdInfo:(LPMAdInfo *)adInfo {
+    [self logMessage:NSStringFromSelector(_cmd)];
+    [self enable:NO showButtonForAdUnit:adInfo.adUnitId];
 }
 
-// This method get invoked after the Interstitial window had closed and control
-// returns to your application.
-- (void)interstitialDidClose {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+#pragma mark - LPMRewardedAdDelegate Methods
+- (void)didRewardAdWithAdInfo:(LPMAdInfo *)adInfo reward:(LPMReward *)reward {
+    [self logMessage:NSStringFromSelector(_cmd)];
 }
 
-#pragma mark - Banner Delegate Functions
 
-/**
- Called after a banner ad has been successfully loaded
- */
-- (void)didLoad:(ISBannerView *)bannerView withAdInfo:(ISAdInfo *)adInfo {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (bannerView == self.bannerView) {
-            return;
-        }
-        self.bannerView = bannerView;
-        if (@available(iOS 11.0, *)) {
-            [self.bannerView setCenter:CGPointMake(self.view.center.x,self.view.frame.size.height - (self.bannerView.frame.size.height/2.0) - self.view.safeAreaInsets.bottom)]; // safeAreaInsets is available from iOS 11.0
-        } else {
-            [self.bannerView setCenter:CGPointMake(self.view.center.x,self.view.frame.size.height - (self.bannerView.frame.size.height/2.0))];
-        }
-        [self.view addSubview:self.bannerView];
-    });
+#pragma mark - LevelPlayNativeAdDelegate
+- (void)didFailToLoad:(nonnull LevelPlayNativeAd *)nativeAd withError:(nonnull NSError *)error {
+    [self logMessage:NSStringFromSelector(_cmd)];
+    [self enable:NO showButtonForAdUnit:kNativeUnitId];
 }
 
-/**
- Called after a banner has attempted to load an ad but failed.
-  @param error The reason for the error
- */
-- (void)didFailToLoadWithError:(NSError *)error {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+- (void)didLoad:(nonnull LevelPlayNativeAd *)nativeAd withAdInfo:(nonnull ISAdInfo *)adInfo {
+    [self enable:YES showButtonForAdUnit:kNativeUnitId];
+    [self.nativeAdView populateWithContent:nativeAd];
+    
 }
 
-/**
- Called after a banner has been clicked.
- */
-- (void)didClickWithAdInfo:(ISAdInfo *)adInfo {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+- (void)didClick:(nonnull LevelPlayNativeAd *)nativeAd withAdInfo:(nonnull ISAdInfo *)adInfo {
+    [self logMessage:NSStringFromSelector(_cmd)];
 }
 
-/**
- Called when a banner is about to present a full screen content.
- */
-- (void)didPresentScreenWithAdInfo:(ISAdInfo *)adInfo {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
-}
-
-/**
- Called after a full screen content has been dismissed.
- */
-- (void)didDismissScreenWithAdInfo:(ISAdInfo *)adInfo {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
-}
-
-/**
- Called when a user would be taken out of the application context.
- */
-- (void)didLeaveApplicationWithAdInfo:(ISAdInfo *)adInfo; {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
-}
-
-#pragma mark - Impression data Delegate Functions
-- (void)impressionDataDidSucceed:(ISImpressionData *)impressionData {
-    NSLog(@"impressionData %@",impressionData);
+- (void)didRecordImpression:(nonnull LevelPlayNativeAd *)nativeAd withAdInfo:(nonnull ISAdInfo *)adInfo {
+    [self logMessage:NSStringFromSelector(_cmd)];
 }
 
 @end

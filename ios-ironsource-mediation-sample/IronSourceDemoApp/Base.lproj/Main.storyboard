@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -11,117 +13,136 @@
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
-                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SupersonicLogo" translatesAutoresizingMaskIntoConstraints="NO" id="WUr-4g-cHl">
-                                <rect key="frame" x="0.0" y="8" width="375" height="61"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Please load any ad!" textAlignment="center" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jnw-Or-B4k">
+                                <rect key="frame" x="0.0" y="96" width="414" height="128"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="61" id="AIm-zw-dN4"/>
-                                    <constraint firstAttribute="width" constant="375" id="sDb-5O-aWJ"/>
+                                    <constraint firstAttribute="height" constant="128" id="9rs-53-U3d"/>
                                 </constraints>
-                            </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rewarded Video" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Szc-xC-13i">
-                                <rect key="frame" x="87.5" y="77" width="200" height="21"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="3DF-T9-Vmt"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" systemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N20-QP-8mE">
-                                <rect key="frame" x="82.5" y="111" width="210" height="36"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="36" id="2St-3F-xvd"/>
-                                    <constraint firstAttribute="width" constant="210" id="9Xc-Z5-ayD"/>
-                                </constraints>
-                                <state key="normal" title="Show"/>
-                                <state key="disabled" title="Initializing"/>
-                                <connections>
-                                    <action selector="showRVButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="W9h-7f-k4a"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Interstitial" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HiU-tt-WK6">
-                                <rect key="frame" x="87.5" y="276" width="200" height="21"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="21" id="HdI-EA-zam"/>
-                                    <constraint firstAttribute="width" constant="200" id="xxB-TN-dnJ"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" systemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tt8-Ax-caa">
-                                <rect key="frame" x="197.5" y="305" width="90" height="36"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="36" id="8DL-ck-dxZ"/>
-                                    <constraint firstAttribute="width" constant="90" id="o3Q-97-NEg"/>
-                                </constraints>
-                                <state key="normal" title="Show"/>
-                                <state key="disabled" title="Initializing"/>
-                                <connections>
-                                    <action selector="showISButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tur-as-I7U"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qE4-Rn-VtA">
-                                <rect key="frame" x="87.5" y="305" width="90" height="36"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="90" id="WCF-Rz-jIa"/>
-                                    <constraint firstAttribute="height" constant="36" id="hlO-nJ-mfL"/>
-                                </constraints>
-                                <state key="normal" title="Load"/>
-                                <state key="disabled" title="Initializing"/>
-                                <connections>
-                                    <action selector="loadISButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Bfh-hK-kfG"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dnw-Fv-bW3">
-                                <rect key="frame" x="167" y="379" width="41.5" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" systemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="pP7-Wh-2EH">
+                                <rect key="frame" x="0.0" y="232" width="414" height="214"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="mxC-5k-Gq6">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="30"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b44-IY-oej">
+                                                <rect key="frame" x="0.0" y="0.0" width="207" height="30"/>
+                                                <state key="normal" title="Load Interstitial"/>
+                                                <connections>
+                                                    <action selector="loadInterstitial:" destination="BYZ-38-t0r" eventType="touchUpInside" id="MC4-oK-jC4"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ael-Uc-0wP">
+                                                <rect key="frame" x="207" y="0.0" width="207" height="30"/>
+                                                <state key="normal" title="Show Interstitial"/>
+                                                <connections>
+                                                    <action selector="showInterstitial:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cYx-3M-gPW"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="uoJ-4u-El8">
+                                        <rect key="frame" x="0.0" y="46" width="414" height="30"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tmn-Bn-FJe">
+                                                <rect key="frame" x="0.0" y="0.0" width="207" height="30"/>
+                                                <state key="normal" title="Load Rewarded"/>
+                                                <connections>
+                                                    <action selector="loadRewarded:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xxA-Ke-W5A"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TCT-iu-u4x">
+                                                <rect key="frame" x="207" y="0.0" width="207" height="30"/>
+                                                <state key="normal" title="Show Rewarded"/>
+                                                <connections>
+                                                    <action selector="showRewarded:" destination="BYZ-38-t0r" eventType="touchUpInside" id="4R8-oy-tV4"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="lNI-6b-bKR">
+                                        <rect key="frame" x="0.0" y="92" width="414" height="30"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VyH-Th-XWN">
+                                                <rect key="frame" x="0.0" y="0.0" width="207" height="30"/>
+                                                <state key="normal" title="Load Native"/>
+                                                <connections>
+                                                    <action selector="loadNative:" destination="BYZ-38-t0r" eventType="touchUpInside" id="9IM-LZ-FCF"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JvD-bG-J4U">
+                                                <rect key="frame" x="207" y="0.0" width="207" height="30"/>
+                                                <state key="normal" title="Show Native"/>
+                                                <connections>
+                                                    <action selector="showNative:" destination="BYZ-38-t0r" eventType="touchUpInside" id="iZU-P0-RGC"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="eTe-h1-Jcm">
+                                        <rect key="frame" x="0.0" y="138" width="414" height="30"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aF5-AH-7KD">
+                                                <rect key="frame" x="0.0" y="0.0" width="414" height="30"/>
+                                                <state key="normal" title="Load Banner"/>
+                                                <connections>
+                                                    <action selector="loadBanner:" destination="BYZ-38-t0r" eventType="touchUpInside" id="aLT-kw-xNr"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="Ina-1y-kwp">
+                                        <rect key="frame" x="0.0" y="184" width="414" height="30"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9fl-Mb-T4H">
+                                                <rect key="frame" x="0.0" y="0.0" width="414" height="30"/>
+                                                <state key="normal" title="Load MREC"/>
+                                                <connections>
+                                                    <action selector="loadMREC:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ws0-Q6-fZv"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                            </stackView>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="qE4-Rn-VtA" firstAttribute="leading" secondItem="HiU-tt-WK6" secondAttribute="leading" id="2E4-Mj-Ypt"/>
-                            <constraint firstItem="Szc-xC-13i" firstAttribute="top" secondItem="WUr-4g-cHl" secondAttribute="bottom" constant="8" id="Bcu-ay-ftx"/>
-                            <constraint firstItem="WUr-4g-cHl" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="Dtn-jb-wLu"/>
-                            <constraint firstItem="N20-QP-8mE" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Q7n-xd-lAd"/>
-                            <constraint firstItem="Dnw-Fv-bW3" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="bAa-35-Tk4"/>
-                            <constraint firstItem="Szc-xC-13i" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="eOo-MI-eel"/>
-                            <constraint firstItem="HiU-tt-WK6" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="fZi-63-hay"/>
-                            <constraint firstItem="WUr-4g-cHl" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="fjI-hK-kEr"/>
-                            <constraint firstItem="qE4-Rn-VtA" firstAttribute="top" secondItem="HiU-tt-WK6" secondAttribute="bottom" constant="8" id="gcP-hM-Uob"/>
-                            <constraint firstItem="Tt8-Ax-caa" firstAttribute="trailing" secondItem="HiU-tt-WK6" secondAttribute="trailing" id="hnd-aJ-tGk"/>
-                            <constraint firstItem="Dnw-Fv-bW3" firstAttribute="top" secondItem="qE4-Rn-VtA" secondAttribute="bottom" constant="38" id="lwE-DW-TGi"/>
-                            <constraint firstItem="N20-QP-8mE" firstAttribute="top" secondItem="Szc-xC-13i" secondAttribute="bottom" constant="13" id="qpa-hf-72n"/>
-                            <constraint firstItem="HiU-tt-WK6" firstAttribute="top" secondItem="N20-QP-8mE" secondAttribute="bottom" constant="129" id="sGe-9t-3Ij"/>
-                            <constraint firstItem="Tt8-Ax-caa" firstAttribute="top" secondItem="HiU-tt-WK6" secondAttribute="bottom" constant="8" id="yec-0K-PTb"/>
+                            <constraint firstItem="pP7-Wh-2EH" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="VsM-dL-ecC"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="jnw-Or-B4k" secondAttribute="trailing" id="jO7-YE-aXM"/>
+                            <constraint firstItem="jnw-Or-B4k" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="lnG-6X-LWg"/>
+                            <constraint firstItem="jnw-Or-B4k" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="sDE-on-hOS"/>
+                            <constraint firstItem="pP7-Wh-2EH" firstAttribute="top" secondItem="jnw-Or-B4k" secondAttribute="bottom" constant="8" symbolic="YES" id="tBJ-l6-6Pg"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="pP7-Wh-2EH" secondAttribute="trailing" id="vl1-dK-hKZ"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="loadISButton" destination="qE4-Rn-VtA" id="GqZ-ga-Asf"/>
-                        <outlet property="showISButton" destination="Tt8-Ax-caa" id="CtW-5j-kMU"/>
-                        <outlet property="showRVButton" destination="N20-QP-8mE" id="Mwm-MG-lvD"/>
-                        <outlet property="versionLabel" destination="Dnw-Fv-bW3" id="eDm-X0-027"/>
+                        <outlet property="messageTextView" destination="jnw-Or-B4k" id="wD6-d2-ARF"/>
+                        <outlet property="showInterstitialButton" destination="ael-Uc-0wP" id="26L-D4-t0k"/>
+                        <outlet property="showNativeButton" destination="JvD-bG-J4U" id="ebh-lg-Ws5"/>
+                        <outlet property="showRewardedButton" destination="TCT-iu-u4x" id="wiL-m3-YoQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="499.5" y="313.5"/>
+            <point key="canvasLocation" x="113" y="89"/>
         </scene>
     </scenes>
     <resources>
-        <image name="SupersonicLogo" width="205" height="43.5"/>
-        <systemColor name="darkTextColor">
+        <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
     </resources>
 </document>
