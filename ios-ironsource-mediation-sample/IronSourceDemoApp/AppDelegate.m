@@ -60,10 +60,10 @@
         [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
             NSLog(@"App tracking transparency authorization status: %d", (int)status);
             if (status == ATTrackingManagerAuthorizationStatusAuthorized) {
-                [LevelPlay setConsent:YES];
+                [LPMPrivacySettings setGDPRConsent:YES];
             }
             else {
-                [LevelPlay setConsent:NO];
+                [LPMPrivacySettings setGDPRConsent:NO];
             }
         }];
     }

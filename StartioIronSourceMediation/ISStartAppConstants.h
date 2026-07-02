@@ -17,7 +17,7 @@
 #ifndef ISStartAppConstants_h
 #define ISStartAppConstants_h
 
-NSString *const ISStartAppAdapterVersion = @"1.1.3";
+NSString *const ISStartAppAdapterVersion = @"1.3.0";
 
 NSString *const ISStartAppKeyAppID = @"appId";
 NSString *const ISStartAppKeyAdapterConfig = @"adapterConfig";
